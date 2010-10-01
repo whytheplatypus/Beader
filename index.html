@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!--
+David Gage
+whytheplatypus@gmail.com
+
+Meant to help with Jennifer Jordans beading ^_^
+-->
+<html>
+<head>
+	<title>Beads</title>
+	<link rel="stylesheet" type="text/css" href="main.css" />
+	<script language="JavaScript1.2">
+    <!-- Original:  CodeLifter.com (support@codelifter.com) -->
+    <!-- Web Site:  http://www.codelifter.com -->
+    
+    <!-- This script and many more are available free online at -->
+    <!-- The JavaScript Source!! http://javascript.internet.com -->
+    var IE = document.all?true:false;
+    var tempX = 0;
+    var tempY = 0;
+    function getMouseXY(e) {
+    if (IE) { // grab the x-y pos.s if browser is IE
+    tempX = event.clientX + document.body.scrollLeft;
+    tempY = event.clientY + document.body.scrollTop;
+    }
+    else {  // grab the x-y pos.s if browser is NS
+    tempX = e.pageX;
+    tempY = e.pageY;
+    }  
+    if (tempX < 0){tempX = 0;}
+    if (tempY < 0){tempY = 0;}  
+
+    return true;
+    }
+    //  End -->
+    
+    function findPos(obj) {
+	    var curleft = curtop = 0;
+	    if (obj.offsetParent) {
+	      do {
+			    curleft += obj.offsetLeft;
+			    curtop += obj.offsetTop;
+			  } while (obj = obj.offsetParent);
+			}
+			return [curleft,curtop];
+    }
+    
+    //from http://www.bloggingdeveloper.com/post/JavaScript-QueryString-ParseGet-QueryString-with-Client-Side-JavaScript.aspx
+    function getQuerystring(key, default_)
+    {
+      if (default_==null) default_=""; 
+      key = key.replace(/[\[]/,"\\\[").replace(/[\]]/,"\\\]");
+      var regex = new RegExp("[\\?&]"+key+"=([^&]*)");
+      var qs = regex.exec(window.location.href);
+      if(qs == null)
+        return default_;
+      else
+      return qs[1];
+    }
+  </script>
+	<script src="beads.js"></script>
+  <script src="jquery.js"></script>
+  <script src="mColorPicker.js"></script>
+  <script src="pre3d.js"></script>
+  <script src="pre3d_shape_utils.js"></script>
+  <script src="pre3d_path_utils.js"></script>
+  <script src="demo_utils.js"></script>
+  <script src="colorspiral.js"></script>
+	<style>
+		html, body{
+			padding:0;
+			margin:0;
+		}
+	</style>
+</head>
+<body onload="load();">
+  <div width=100% id="saveLoad"><input id="saveas" type="text" ><button type="button" onclick="save();">Save</button><button type="button" onclick="braceletToURL();">Convert To URL</button></div>
+  <div id="threeD" class="left">
+    <button id="left">left</button><button id="right">right</button>
+    <div><canvas id="cv3d" width="200" height="600">Sorry, this demo requires a web browser which supports HTML5 canvas!</canvas></div>
+	</div>
+  <div id="graph" class="left">
+    <button onclick="setStart();">set repeat start</button><button onclick="setStop();">set repeat stop</button>
+    <div><canvas id="cvBeads">Sorry, this demo requires a web browser which supports HTML5 canvas!</canvas></div>
+	  <div class="left"><button onclick="addRow();">+</button><span id="numRow">across</span><button onclick="minusRow();">-</button></div>
+    <div class="left"><button onclick="addCol();">+</button><span id="numCol">down</span><button onclick="minusCol();">-</button></div>
+	  
+	  <!--<canvas id="cvColors">Sorry, this demo requires a web browser which supports HTML5 canvas!</canvas>-->
+	  <div class="clear"></div>
+	  <div id="colors">
+      <input type="color" name="color" text="hidden" style="height:20px;width:20px;" value="#f7941d" class="color">
+      <button type="button" onClick="addColorButton(color.value);">Add Color</button>
+    </div>
+	</div>
+</body>
+</html>
