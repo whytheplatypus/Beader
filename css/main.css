@@ -1,0 +1,18 @@
+div.left{
+  float:left;
+}
+
+div.clear{
+  clear:both;
+  width:0px;
+  height:0px;
+}
+
+div#graph{
+  margin:100px 0 10px 25px;
+}
+
+div#threeD{
+  margin:10px;
+  text-align:center;
+}
