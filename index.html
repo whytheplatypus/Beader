@@ -76,7 +76,7 @@ whytheplatypus@gmail.com
         		for(var k = 0; k < across; k++){
         			//heigh*7/4
         			//var newSphere = new Sphere(50, 10, 0xEEEEEE, Math.cos(count*(across)*(Math.PI/(down*across))*across)*100, count*(Math.PI/(down*across))*(7/4)*50*across-down*across*(Math.PI/(down*across))*(7/4)*50*across/2, Math.sin(count*(across)*(Math.PI/(down*across))*across)*100, i, k);
-        			var newSphere = new Sphere(50, 10, 0xEEEEEE, Math.cos(count*((2*Math.PI)/(across)))*100, count*((2*Math.PI)/across)*(100/across)-down*across*((2*Math.PI)/across)*(100/across)/2, Math.sin(count*((2*Math.PI)/(across)))*100, i, k);
+        			var newSphere = new Sphere(50, 10, 0xEEEEEE, -Math.cos(count*((2*Math.PI)/(across)))*100, -count*((2*Math.PI)/across)*(100/across)+down*across*((2*Math.PI)/across)*(100/across)/2, Math.sin(count*((2*Math.PI)/(across)))*100, i, k);
         	
         			count++;
         		}
