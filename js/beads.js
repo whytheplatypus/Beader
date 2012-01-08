@@ -49,23 +49,33 @@ ColorBead.prototype.draw = function(doFill, important){
 	//middle grid
 	tempX = padding + 2*gridCols*beadWidth + beadWidth/2 - this.column*(beadWidth) + this.row*(beadWidth/2);
 	tempY = beadHeight*1.5 + this.row*(beadHeight);
-	ctxBeads.strokeStyle = "#000000";
-	if(important){
-	  ellipse(tempX, tempY, beadWidth+5, beadHeight+5, doFill, ctxBeads);
-	}
-	else{
-	  ellipse(tempX, tempY, beadWidth, beadHeight, doFill, ctxBeads);
-	}
+  
+  //for now
+  var middleBeadButton = document.createElement('button');
+  middleBeadButton.style.position = "absolute";
+  middleBeadButton.style.top = tempY + "px";
+  middleBeadButton.style.left = tempX + "px";
+  middleBeadButton.style.background = this.color;
+  document.body.appendChild(middleBeadButton);
+  
 	//left grid
 	tempX = padding + gridCols*beadWidth - this.column*(beadWidth) + this.row*(beadWidth/2);
 	tempY = (beadHeight/2) + this.row*(beadHeight);
-	ctxBeads.strokeStyle = "#fff606";
-	ellipse(tempX, tempY, beadWidth, beadHeight, doFill, ctxBeads);
+	var leftBeadButton = document.createElement('button');
+  leftBeadButton.style.position = "absolute";
+  leftBeadButton.style.top = tempY + "px";
+  leftBeadButton.style.left = tempX + "px";
+  leftBeadButton.style.background = this.color;
+  document.body.appendChild(leftBeadButton);
 	//right grid
 	tempX = padding + 3*gridCols*beadWidth + beadWidth - this.column*(beadWidth) + this.row*(beadWidth/2);
 	tempY = 2.5*beadHeight + this.row*(beadHeight);
-	ctxBeads.strokeStyle = "#fff606";
-	ellipse(tempX, tempY, beadWidth, beadHeight, doFill, ctxBeads);
+	var rightBeadButton = document.createElement('button');
+  rightBeadButton.style.position = "absolute";
+  rightBeadButton.style.top = tempY + "px";
+  rightBeadButton.style.left = tempX + "px";
+  rightBeadButton.style.background = this.color;
+  document.body.appendChild(rightBeadButton);
 }
 function createGrid(){
 	ColorBeads = new Array(gridRows*gridCols);

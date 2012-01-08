@@ -10,33 +10,154 @@ whytheplatypus@gmail.com
 	<link rel="stylesheet" type="text/css" href="css/main.css" />
   	<script src="js/Three.js"></script>
   	<script src="js/RequestAnimationFrame.js"></script>
-  	<script>
+  	<script src="js/raphael-min.js" type="text/javascript" charset="utf-8"></script>
+	<script src="js/colorpicker.js"></script>
+	<script src="js/colorwheel.js"></script>
+</head>
+<body>
+<div id="holder"></div>
+<script>
 	
 		var camera, scene, renderer,
-		geometry, material, mesh;
+		geometry, material;//, mesh;
+		var nextColor;
+		var targetRotation = 0;
+		var targetRotationOnMouseDown = 0;
+
+		var mouseX = 0;
+		var mouseXOnMouseDown = 0;
+		
+		var r;
+		
+		var across = 6;
+		var down = 20;
+		var width = 15;
+		var height = 10;
+		var colors = [0xff0000, 0x00ff00, 0x0000ff];
+		var padding = 5;
 	//wrap these in jquery
 		init();
 		animate();
 	
 		function init() {
-	
+			
+			
 			scene = new THREE.Scene();
 	
-			camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 1, 10000 );
 			camera.position.z = 1000;
 			scene.add( camera );
 	
-			geometry = new THREE.CubeGeometry( 200, 200, 200 );
-			material = new THREE.MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
-	
-			mesh = new THREE.Mesh( geometry, material );
-			scene.add( mesh );
-	
 			renderer = new THREE.CanvasRenderer();
 			renderer.setSize( window.innerWidth, window.innerHeight );
-	
+			/*document.body.addEventListener('click', function(event){
+				var newSphere = new Sphere(200, 10, 0xff0000, event.screenX, event.screenY);
+			}, false);*/
+			//var newSphere = new Sphere(200, 10, 0xff0000, 0, 0, 0);
+			
+			/*for(var i = 0; i < down*across; i++){
+				console.log(Math.cos(i*(Math.PI/(down*across))*across));
+        		var newSphere = new Sphere(50, 10, colors[i%3], Math.cos(i*(across)*(Math.PI/(down*across))*across)*100, i*(Math.PI/(down*across))*(7/4)*50*across-down*across*(Math.PI/(down*across))*(7/4)*50*across/2, Math.sin(i*(across)*(Math.PI/(down*across))*across)*100);
+        	}*/
 			document.body.appendChild( renderer.domElement );
+			document.addEventListener( 'mousedown', onDocumentMouseDown, false );
+			
+			
+			//raphael stuff:
+			
+        	//build grid
+        	
+        	
+        	console.log((across*width*2+width*down));
+        	r = Raphael("holder", 640, 480);
+        	r.setSize((across*width*2*3+width+width*down)+padding*2, height*(7/4)*down+height*(11/4)+height+padding*2);
+        	var count = 0;
+        	for(var i = 0; i < down; i++){
+        		for(var k = 0; k < across; k++){
+        			//heigh*7/4
+        			//var newSphere = new Sphere(50, 10, 0xEEEEEE, Math.cos(count*(across)*(Math.PI/(down*across))*across)*100, count*(Math.PI/(down*across))*(7/4)*50*across-down*across*(Math.PI/(down*across))*(7/4)*50*across/2, Math.sin(count*(across)*(Math.PI/(down*across))*across)*100, i, k);
+        			var newSphere = new Sphere(50, 10, 0xEEEEEE, Math.cos(count*((2*Math.PI)/(across)))*100, count*((2*Math.PI)/across)*(100/across)-down*across*((2*Math.PI)/across)*(100/across)/2, Math.sin(count*((2*Math.PI)/(across)))*100, i, k);
+        	
+        			count++;
+        		}
+        	}
+        	
+        	var cp = Raphael.colorpicker(100, 500, 150); // #fff is optional init color
+			nextColor = cp.color(); // returns "#fff"
+			//cp.color("#fc0"); // sets new color
+			cp.onchange = function (color) {
+			   // do something with the color when user change it
+			   nextColor = color;
+			   
+			}
 	
+		}
+		
+		function Sphere(radius, density, color, x, y, z, i, k){
+			
+			
+			geometry = new THREE.SphereGeometry( radius, density, density );
+			material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
+	
+			var mesh = new THREE.Mesh( geometry, material );
+			mesh.translateX(x)
+			mesh.translateY(y);
+			mesh.translateZ(z);
+			scene.add( mesh );
+			
+			var shape = r.ellipse(width*2*across+width*2+padding, height*(11/4)+padding, width, height);
+			//separating this out so i can see what's happening
+			//move over by the beads spot in the row, 
+			//and then by it's half-width * the row number to create the diagonal
+			shape.translate(k*width*2+width*i, i*height*(7/4));
+			shape.attr({fill: "#000", stroke: "#000", "fill-opacity": 0, cursor: "pointer"});
+			
+			var leftShape = shape.clone();
+			leftShape.translate(-(across*width*2+width), -height*(7/4));
+			
+			var rightShape = shape.clone();
+			rightShape.translate(across*width*2+width, height*(7/4));
+			
+			leftShape.data("right", rightShape);
+			leftShape.data("center", shape);
+			leftShape.click(function(){
+				//could change to animate with?
+				this.data("center").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.data("right").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				//var sphereColor = new THREE.Color(0x000000);
+				var selectedColor = Raphael.getRGB(nextColor);
+				console.log(selectedColor);
+				mesh.material.color.setRGB(selectedColor.r, selectedColor.g, selectedColor.b);
+			});
+			
+			rightShape.data("left", leftShape);
+			rightShape.data("center", shape);
+			rightShape.click(function(){
+				//could change to animate with?
+				this.data("left").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.data("center").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				var selectedColor = Raphael.getRGB(nextColor);
+				console.log(selectedColor);
+				mesh.material.color.setRGB(selectedColor.r, selectedColor.g, selectedColor.b);
+			
+			});
+			
+			shape.data("left", leftShape);
+			shape.data("right", rightShape);
+			shape.glow({width: 5, color: "#FBEC5D"});
+			shape.click(function(){
+				//could change to animate with?
+				this.data("left").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.data("right").animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				this.animate({"fill": nextColor, "fill-opacity": 1}, 300);
+				var selectedColor = Raphael.getRGB(nextColor);
+				console.log(selectedColor);
+				mesh.material.color.setRGB(selectedColor.r/255, selectedColor.g/255, selectedColor.b/255);
+				console.log(mesh.material.color);
+			
+			});
 		}
 	
 		function animate() {
@@ -46,18 +167,51 @@ whytheplatypus@gmail.com
 			render();
 	
 		}
+		
+		function onDocumentMouseDown( event ) {
+
+			event.preventDefault();
+
+			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+			document.addEventListener( 'mouseup', onDocumentMouseUp, false );
+			document.addEventListener( 'mouseout', onDocumentMouseOut, false );
+
+			mouseXOnMouseDown = event.clientX;
+			targetRotationOnMouseDown = targetRotation;
+		}
+
+		function onDocumentMouseMove( event ) {
+
+			mouseX = event.clientX;
+
+			targetRotation = targetRotationOnMouseDown + ( mouseX - mouseXOnMouseDown );
+		}
+
+		function onDocumentMouseUp( event ) {
+
+			document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+			document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+			document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+		}
 	
+		function onDocumentMouseOut( event ) {
+
+			document.removeEventListener( 'mousemove', onDocumentMouseMove, false );
+			document.removeEventListener( 'mouseup', onDocumentMouseUp, false );
+			document.removeEventListener( 'mouseout', onDocumentMouseOut, false );
+		}
+		
 		function render() {
+			
 	
-			mesh.rotation.x += 0.01;
-			mesh.rotation.y += 0.02;
+			camera.position.x = 1400 * Math.sin( targetRotation * Math.PI / 360 );
+			camera.position.z = 1400 * Math.cos( targetRotation * Math.PI / 360 );
+			camera.lookAt( new THREE.Vector3(0, 0, 0) );
 	
 			renderer.render( scene, camera );
 	
 		}
 
 	</script>
-</head>
-<body>
 </body>
 </html>
