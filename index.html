@@ -96,10 +96,12 @@ whytheplatypus@gmail.com
 		function Sphere(radius, density, color, x, y, z, i, k){
 			
 			
-			geometry = new THREE.SphereGeometry( radius, density, density );
+			//geometry = new THREE.SphereGeometry( radius, density, density );
+			geometry = new THREE.TorusGeometry( radius, 50, density, density);
 			material = new THREE.MeshBasicMaterial( { color: color, wireframe: false } );
 	
 			var mesh = new THREE.Mesh( geometry, material );
+			mesh.rotation.x = Math.PI/2;
 			mesh.translateX(x)
 			mesh.translateY(y);
 			mesh.translateZ(z);
